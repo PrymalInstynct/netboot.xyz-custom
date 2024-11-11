@@ -6,9 +6,9 @@
 isset ${dhcp-server} && set ipparam ip=dhcp || set ipparam ip=${ip}::${gateway}:${netmask}:::none nameserver=${dns}
 set ipparam BOOTIF=${netX/mac} ${ipparam}
 
-set rhel_base_url http://10.10.10.30:8080/rhel9
+set rhel_base_url http://10.10.10.30:8080/rhel
+set rhel_os_verson 9
 set os_arch ${arch}
-
 iseq ${os_arch} x86_64 && set os_arch x86_64 ||
 iseq ${os_arch} arm64 && set os_arch aarch64 ||
 goto ${menu} ||
@@ -22,6 +22,7 @@ item rhel_install ${space} ${os} Graphical Install
 item rhel_install_text ${space} ${os} Text Install
 item --gap Options:
 item url_set ${space} Base URL [ ${rhel_base_url} ]
+item version_set ${space} OS Version [ ${rhel_os_verion} ]
 choose rhel_version || goto rhel_exit
 goto ${rhel_version}
 
@@ -38,17 +39,29 @@ echo
 prompt Press any key to return to RHEL Menu...
 goto rhel
 
+:version_set
+echo Set Version of Red Hat Enterprise Linux to Install:
+echo e.g. 7, 8, 9
+echo
+echo -n OS Version: ${} && read rhel_os_verion
+echo
+echo netboot.xyz will attempt to Install Red Hat Enterprise Linux ${rhel_os_version}:
+echo
+prompt Press any key to return to RHEL Menu...
+goto rhel
+
 :rhel_install_text
 set params inst.text
 goto rhel_install
 
 :rhel_install
 isset ${rhel_base_url} && goto boot || echo URL not set... && goto url_set
+isset ${rhel_os_version} && goto boot || echo OS Version not set... && goto version_set
 goto boot
 
 :boot
 imgfree
-kernel ${rhel_base_url}/os/${os_arch}/images/pxeboot/vmlinuz inst.repo=${rhel_base_url}/os/${os_arch} inst.ks=${rhel_base_url}/kickstart/rhel9.ks ${ipparam} ${params} initrd=initrd.magic ${cmdline}
+kernel ${rhel_base_url}/os/${os_arch}/images/pxeboot/vmlinuz inst.repo=${rhel_base_url}/${rhel_os_verion}/os/${os_arch} inst.ks=${rhel_base_url}/${rhel_os_verion}/kickstart/rhel${rhel_os_verion}.ks ${ipparam} ${params} initrd=initrd.magic ${cmdline}
 initrd ${rhel_base_url}/os/${os_arch}/images/pxeboot/initrd.img
 md5sum vmlinuz initrd.img
 boot
