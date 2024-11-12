@@ -61,7 +61,7 @@ goto boot
 
 :boot
 imgfree
-kernel ${rhel_base_url}/${rhel_os_version}/os/${os_arch}/images/pxeboot/vmlinuz inst.repo=${rhel_base_url}/${rhel_os_version}/os/${os_arch} inst.ks=${rhel_base_url}/${rhel_os_version}/kickstart/rhel${rhel_os_version}.ks ${ipparam} ${params} initrd=initrd.magic ${cmdline}
+kernel ${rhel_base_url}/${rhel_os_version}/os/${os_arch}/images/pxeboot/vmlinuz inst.stage2=${rhel_base_url}/${rhel_os_version}/os/${os_arch} inst.ks=${rhel_base_url}/${rhel_os_version}/kickstart/rhel${rhel_os_version}.ks ${ipparam} ${params} initrd=initrd.magic ${cmdline}
 initrd ${rhel_base_url}/${rhel_os_version}/os/${os_arch}/images/pxeboot/initrd.img
 md5sum vmlinuz initrd.img
 boot
